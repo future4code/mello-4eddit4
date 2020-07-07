@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function index() {
-  return <div>ERROR</div>;
+export default function Error() {
+    return <div>ERROR</div>;
 }
