@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 // ========= GLOBAL
 
@@ -30,4 +31,18 @@ export const CardPost = styled.div`
   border: solid black 1px;
   width: 300px;
   height: 150px;
+  margin-top: 8px;
+  
+
+  header {
+    border: solid 1px grey;
+    width: 100%;
+    text-align: center;
+  }
+  
 `;
+
+export const LinkStyled = styled(Link)`
+  text-decoration: none;
+  color: black;
+`
