@@ -48,7 +48,7 @@ export default function HomePage() {
         <Container>
             <h1>HOME PAGE</h1>
             <input placeholder="Email" onChange={handleChangeEmail} />
-            <input placeholder="Senha" onChange={handleChangePassWd} />
+            <input type="password" placeholder="Senha" onChange={handleChangePassWd} />
             <button onClick={handleClickLogin}>Entrar</button>
             <Link to="/register">
                 <button>Cadastrar</button>
