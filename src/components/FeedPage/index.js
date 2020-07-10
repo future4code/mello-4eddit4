@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Container, CardPost } from "../GlobalStyles/styles";
 import axios from "axios";
 
@@ -8,8 +8,8 @@ import { useBlockAccess } from "../Hooks/useBlockAccess";
 export default function FeedPage() {
   const history = useHistory();
   const [listPosts, setListPosts] = useState([]);
-
-  const [vote, setVote] = useState({});
+  const [inputValue, setInputValue] = useState([]);
+  const token = window.localStorage.getItem("token");
 
   useBlockAccess();
 
@@ -18,18 +18,22 @@ export default function FeedPage() {
     history.push("/");
   };
 
+  const goToPostPage = (idPost) => {
+    history.push(`/post/${idPost}`);
+  };
+
   useEffect(() => {
     getPostsFromData();
   }, []);
 
+  const authorization = {
+    headers: {
+      Authorization: window.localStorage.getItem("token"),
+    },
+  };
+
   // ======================================================== PEGAR POSTS
   const getPostsFromData = () => {
-    const authorization = {
-      headers: {
-        Authorization: window.localStorage.getItem("token"),
-      },
-    };
-
     axios
       .get(
         `https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts`,
@@ -42,39 +46,14 @@ export default function FeedPage() {
   };
   // ======================================================== VOTES
 
-  const putVotesUp = (postId, userVoteDirection, votes) => {
-    setVote(votes);
-
+  const putVotes = (postId, decision, userVoteDirection) => {
     let body = {};
-    if (userVoteDirection !== 0) {
+    if (userVoteDirection === decision) {
       body = { direction: 0 };
-
-      //   const postIndex = listPosts.findIndex((post) => post.id === postId);
-      //   // resposta do findIndex é -1 quando nao encontrou e 0 quando encontrou
-      //   if (userVoteDirection === -1) {
-      //     if (postIndex !== -1) {
-      //       listPosts[postIndex].votesCount += 1;
-      //       setListPosts([...listPosts]);
-      //     } else {
-      //       listPosts[postIndex].votesCount -= 1;
-      //       setListPosts([...listPosts]);
-      //     }
-      //   }
     } else {
-      body = { direction: +1 };
-      //   const postIndex = listPosts.findIndex((post) => post.id === postId);
-      //   // resposta do findIndex é -1 quando nao encontrou e 0 quando encontrou
-      //   if (postIndex !== -1) {
-      //     listPosts[postIndex].votesCount += 1;
-      //     setListPosts([...listPosts]);
-      //   }
+      body = { direction: decision };
     }
 
-    const authorization = {
-      headers: {
-        Authorization: window.localStorage.getItem("token"),
-      },
-    };
     axios
       .put(
         `https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts/${postId}/vote`,
@@ -83,6 +62,33 @@ export default function FeedPage() {
       )
       .then((response) => {
         console.log(response.data);
+        getPostsFromData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  // ======================================================== CREATE POST
+  const bodyPost = {
+    text: inputValue,
+    title: "titulo",
+  };
+
+  const handlePost = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const createPost = () => {
+    axios
+      .post(
+        `https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts`,
+        bodyPost,
+        authorization
+      )
+      .then((response) => {
+        console.log(response.data);
+        getPostsFromData();
+        setInputValue("");
       })
       .catch((err) => {
         console.log(err);
@@ -90,47 +96,25 @@ export default function FeedPage() {
   };
 
   // =======================================================
-  const putVotesDown = (postId, userVoteDirection, votes) => {
-    let body = {};
 
-    if (userVoteDirection !== 0) {
-      body = { direction: 0 };
-    } else {
-      body = { direction: -1 };
-    }
-
-    const authorization = {
-      headers: {
-        Authorization: window.localStorage.getItem("token"),
-      },
-    };
-    axios
-      .put(
-        `https://us-central1-labenu-apis.cloudfunctions.net/labEddit/posts/${postId}/vote`,
-        body,
-        authorization
-      )
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  if ("token") {
+  if (token) {
     return (
       <Container>
         <h1>FEED PAGE</h1>
         <h3>
           Você está logado como: {window.localStorage.getItem("username")}
         </h3>
-        <label>Crie seu post:</label>
         <button onClick={handleClickLogout}>Logout</button>
-        <input placeholder="Escreva seu post" />
-        <Link to="/">
-          <button>Voltar para login</button>
-        </Link>
+        <label>Crie seu post:</label>
+
+        <input
+          value={inputValue}
+          onChange={handlePost}
+          placeholder="Escreva seu post"
+        />
+
+        <button onClick={createPost}>Postar</button>
+
         {listPosts.map((post) => {
           return (
             <CardPost key={post.id}>
@@ -143,26 +127,20 @@ export default function FeedPage() {
 
               <div>
                 <button
-                  onClick={() =>
-                    putVotesUp(post.id, post.userVoteDirection, post.votesCount)
-                  }
+                  onClick={() => putVotes(post.id, 1, post.userVoteDirection)}
                 >
                   +
                 </button>
                 <span>{post.votesCount}</span>
 
                 <button
-                  onClick={() =>
-                    putVotesDown(
-                      post.id,
-                      post.userVoteDirection,
-                      post.votesCount
-                    )
-                  }
+                  onClick={() => putVotes(post.id, -1, post.userVoteDirection)}
                 >
                   -
                 </button>
-                <span>comentários</span>
+                <span onClick={() => goToPostPage(post.id)}>
+                  {post.commentsCount} - comentários
+                </span>
               </div>
             </CardPost>
           );
@@ -170,11 +148,6 @@ export default function FeedPage() {
       </Container>
     );
   } else {
-    return (
-      <div>
-        <p>Error</p>
-      </div>
-    );
-    //<Link to="/error" />;
+    return <h1>ACESSO NEGADO</h1>;
   }
 }

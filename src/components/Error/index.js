@@ -1,5 +1,5 @@
 import React from "react";
 
 export default function Error() {
-    return <div>ERROR</div>;
+  return <div>404 - PÁGINA NÃO EXISTENTE</div>;
 }
