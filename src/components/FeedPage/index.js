@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Container, CardPost, CardInput, Footer } from "../GlobalStyles/styles";
+import ArrowUp from "../../assets/arrowblackup.svg";
+import ArrowDown from "../../assets/arrowblack.svg";
+
 import axios from "axios";
 
 import { useBlockAccess } from "../Hooks/useBlockAccess";
@@ -24,7 +27,7 @@ export default function FeedPage() {
 
   useEffect(() => {
     getPostsFromData();
-  }, []);
+  });
 
   const authorization = {
     headers: {
@@ -107,21 +110,20 @@ export default function FeedPage() {
         <button onClick={handleClickLogout}>Logout</button>
 
         <CardInput>
-        <label>Crie seu post:</label>
-        <input
-          value={inputValue}
-          onChange={handlePost}
-          placeholder="Escreva seu post"
-        />
+          <input
+            value={inputValue}
+            onChange={handlePost}
+            placeholder="Escreva seu post"
+          />
 
-        <button onClick={createPost}>Postar</button>
+          <button onClick={createPost}>Postar</button>
         </CardInput>
-  
+
         {listPosts.map((post) => {
           return (
             <CardPost key={post.id}>
               <header>
-                <p>{post.username}</p>
+                <h3>{post.username}</h3>
               </header>
               <section>
                 <p>{post.text}</p>
@@ -129,17 +131,19 @@ export default function FeedPage() {
 
               <Footer>
                 <span>
-                <button
-                  onClick={() => putVotes(post.id, 1, post.userVoteDirection)}
-                >
-                  +
-                </button>
-                <span>{post.votesCount}</span>
-                <button
-                  onClick={() => putVotes(post.id, -1, post.userVoteDirection)}
-                >
-                  -
-                </button>
+                  <img
+                    src={ArrowUp}
+                    alt=""
+                    onClick={() => putVotes(post.id, 1, post.userVoteDirection)}
+                  />
+                  <span>{post.votesCount}</span>
+                  <img
+                    src={ArrowDown}
+                    alt=""
+                    onClick={() =>
+                      putVotes(post.id, -1, post.userVoteDirection)
+                    }
+                  />
                 </span>
                 <span onClick={() => goToPostPage(post.id)}>
                   {post.commentsCount} - comentários

@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Container, CardPost, CardComents } from "../GlobalStyles/styles";
 import { useBlockAccess } from "../Hooks/useBlockAccess";
 import axios from "axios";
+import ArrowUp from "../../assets/arrowblackup.svg";
+import ArrowDown from "../../assets/arrowblack.svg";
+
+import {
+  Container,
+  CardPost,
+  CardComents,
+  CardInput,
+  Footer,
+} from "../GlobalStyles/styles";
 
 export default function PostPage() {
   const [comments, setComments] = useState([]);
@@ -21,7 +30,7 @@ export default function PostPage() {
 
   useEffect(() => {
     getDetails();
-  }, []);
+  } );
 
   // ======================================================== POST DETAILS
   const getDetails = () => {
@@ -121,66 +130,70 @@ export default function PostPage() {
         {details.map((post) => {
           return (
             <CardPost>
-              <p>{post.username}</p>
-              <div>
+              <header>
+                <h3>{post.username}</h3>
+              </header>
+              <section>
                 <p>{post.text}</p>
-              </div>
-              <div>
-                <button
-                  onClick={() => {
-                    votePost(post.id, 1, post.userVoteDirection);
-                  }}
-                >
-                  +
-                </button>
-                <span>{post.votesCount}</span>
-                <button
-                  onClick={() => {
-                    votePost(post.id, -1, post.userVoteDirection);
-                  }}
-                >
-                  -
-                </button>
+              </section>
+              <Footer>
+                <span>
+                  <img
+                    src={ArrowUp}
+                    alt=""
+                    onClick={() => {
+                      votePost(post.id, 1, post.userVoteDirection);
+                    }}
+                  />
+                  <span>{post.votesCount}</span>
+                  <img
+                    src={ArrowDown}
+                    alt=""
+                    onClick={() => {
+                      votePost(post.id, -1, post.userVoteDirection);
+                    }}
+                  />
+                </span>
                 <span>{post.commentsCount} - Comentários</span>
-              </div>
+              </Footer>
             </CardPost>
           );
         })}
 
-        <div>
-          <label>Escreva seu comentário</label>
+        <CardInput>
           <input
             value={inputValue}
             onChange={handleComment}
             placeholder="Escreva seu comentário"
           />
           <button onClick={createComment}>Comentar</button>
-          <h3>TODOS COMENTÁRIOS</h3>
-        </div>
+        </CardInput>
         {comments.map((comment) => {
           return (
             <CardComents>
-              <p>{comment.username}</p>
-              <div>
+              <h3>{comment.username}</h3>
+              <section>
                 <p>{comment.text}</p>
-              </div>
-              <div>
-                <button
-                  onClick={() => {
-                    voteComment(comment.id, 1, comment.userVoteDirection);
-                  }}
-                >
-                  +
-                </button>
-                <span>{comment.votesCount}</span>
-                <button
-                  onClick={() => {
-                    voteComment(comment.id, -1, comment.userVoteDirection);
-                  }}
-                >
-                  -
-                </button>
-              </div>
+              </section>
+              <Footer>
+                <span>
+                  <img
+                    src={ArrowUp}
+                    alt=""
+                    onClick={() => {
+                      voteComment(comment.id, 1, comment.userVoteDirection);
+                    }}
+                  />
+                  <span>{comment.votesCount}</span>
+                  <img
+                    src={ArrowDown}
+                    alt=""
+                    onClick={() => {
+                      voteComment(comment.id, -1, comment.userVoteDirection);
+                    }}
+                  />
+                </span>
+              </Footer>
             </CardComents>
           );
         })}
