@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { Container } from "../GlobalStyles/styles";
+import { Container, CardRegister } from "../GlobalStyles/styles";
 
 import axios from "axios";
 
@@ -47,11 +47,15 @@ export default function RegisterPage() {
     return (
         <Container>
             <h1>REGISTER PAGE</h1>
-            <input placeholder="Nome de usuário" onChange={handleSignInUser} />
-            <input placeholder="Email" onChange={handleSignInEmail} />
-            <input placeholder="Senha" onChange={handleSignInPassWd} />
-            <button onClick={handleClickSignUp}>Cadastrar</button>
-
+            <CardRegister>
+                <input
+                    placeholder="NOME DE USUÁRIO"
+                    onChange={handleSignInUser}
+                />
+                <input placeholder="EMAIL" onChange={handleSignInEmail} />
+                <input placeholder="SENHA" onChange={handleSignInPassWd} />
+                <button onClick={handleClickSignUp}>CADASTRAR</button>
+            </CardRegister>
             <Link to="/">
                 <button>Voltar</button>
             </Link>
