@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { Container, CardPost } from "../GlobalStyles/styles";
+import { Container, CardPost, CardInput, Footer } from "../GlobalStyles/styles";
 import axios from "axios";
 
 import { useBlockAccess } from "../Hooks/useBlockAccess";
@@ -125,45 +125,50 @@ export default function FeedPage() {
         <h3>
           Você está logado como: {window.localStorage.getItem("username")}
         </h3>
-        <label>Crie seu post:</label>
         <button onClick={handleClickLogout}>Logout</button>
-        <input placeholder="Escreva seu post" />
-        <Link to="/">
-          <button>Voltar para login</button>
-        </Link>
+        <CardInput>
+          <input placeholder="Escreva seu post" />
+          <button>Postar</button>
+        </CardInput>
         {listPosts.map((post) => {
           return (
             <CardPost key={post.id}>
               <header>
                 <p>{post.username}</p>
               </header>
-              <div>
+              <section>
                 <p>{post.text}</p>
-              </div>
+              </section>
 
-              <div>
-                <button
-                  onClick={() =>
-                    putVotesUp(post.id, post.userVoteDirection, post.votesCount)
-                  }
-                >
-                  +
-                </button>
-                <span>{post.votesCount}</span>
+              <Footer>
+                <span>
+                  <button
+                    onClick={() =>
+                      putVotesUp(
+                        post.id,
+                        post.userVoteDirection,
+                        post.votesCount
+                      )
+                    }
+                  >
+                    +
+                  </button>
+                  <span>{post.votesCount}</span>
 
-                <button
-                  onClick={() =>
-                    putVotesDown(
-                      post.id,
-                      post.userVoteDirection,
-                      post.votesCount
-                    )
-                  }
-                >
-                  -
-                </button>
+                  <button
+                    onClick={() =>
+                      putVotesDown(
+                        post.id,
+                        post.userVoteDirection,
+                        post.votesCount
+                      )
+                    }
+                  >
+                    -
+                  </button>
+                </span>
                 <span>comentários</span>
-              </div>
+              </Footer>
             </CardPost>
           );
         })}
