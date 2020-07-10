@@ -166,13 +166,11 @@ export const CardPost = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.1);
   width: 375px;
   margin: 8px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  display: flex;
   justify-content: center;
+
 
   header {
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -180,6 +178,7 @@ export const CardPost = styled.div`
     height: 30px;
     text-align: center;
   }
+
   section {
     height: 400px;
   }
